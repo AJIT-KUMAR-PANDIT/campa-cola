@@ -6,4 +6,11 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   assetsInclude: ["**/*.glb"],
+  server: {
+    host: true,
+    hmr: {
+      host: '6e990add2cad.ngrok-free.app',
+      protocol: 'wss',
+    },
+  },
 });

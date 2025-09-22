@@ -8,7 +8,7 @@ const TopNav = () => {
         <div className="hidden md:block">About</div>
         <div className="hidden md:block">Products</div>
         <div>
-          <img src="/logo.svg" alt="logo" />
+          <img src="/logo.png" alt="logo" className="w-auto mt-8 h-[18vh]" />
         </div>
         <div className="hidden md:block">Shop</div>
         <div className="hidden md:block">Contact</div>

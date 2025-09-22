@@ -1,9 +1,9 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { Suspense, useState, useRef, useEffect } from "react";
 
-import modelUrl from "../assets/base_basic_shaded.glb";
+import modelUrl from "../assets/1.glb";
 
 function Model({ scale = 1 }) {
   const { scene } = useGLTF(modelUrl);
@@ -13,8 +13,6 @@ useGLTF.preload(modelUrl);
 
 export default function HomePage() {
   const ref = useRef(null);
-
-  // Track scroll progress
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -37,10 +35,41 @@ export default function HomePage() {
   const lightLeftX = useTransform(scrollYProgress, [0, 1], [-10, -5]);
   const lightRightX = useTransform(scrollYProgress, [0, 1], [10, 5]);
 
+  const [isInteracting, setIsInteracting] = useState(false);
+  const isInteractingRef = useRef(isInteracting);
+
+  useEffect(() => {
+    isInteractingRef.current = isInteracting;
+  }, [isInteracting]);
+
+  const pointerDownPos = useRef({ x: 0, y: 0 });
+  const isPointerDown = useRef(false);
+  const interactionTimer = useRef(null);
+  const controlsRef = useRef(null); // Add this ref for OrbitControls
+
+  const startInteractionTimer = () => {
+    if (interactionTimer.current) {
+      clearTimeout(interactionTimer.current);
+    }
+    interactionTimer.current = setTimeout(() => {
+      if (controlsRef.current) {
+        controlsRef.current.reset(); // Reset camera view
+      }
+      setIsInteracting(false);
+    }, 1000); // Change to 1 seconds
+  };
+
+  const stopInteractionTimer = () => {
+    if (interactionTimer.current) {
+      clearTimeout(interactionTimer.current);
+      interactionTimer.current = null;
+    }
+  };
+
   return (
     <motion.div
       ref={ref}
-      className="w-full h-[200vh] flex flex-col items-center justify-start bg-transparent"
+      className="w-full h-[121vh] flex flex-col items-center justify-start bg-transparent"
     >
       {/* Heading row */}
       <div className=" flex flex-col lg:flex-row inset-0 items-center justify-center text-9xl font-bold text-gray-300 relative mt-20 w-full z-0">
@@ -48,13 +77,39 @@ export default function HomePage() {
           style={{ marginRight: textSpacing }}
           className="text-7xl lg:text-9xl"
         >
-          Campa
+          Ajit
         </motion.span>
 
         {/* GLB inline */}
         <motion.div
           style={{ y: modelY }}
-          className="relative mx-6 mt-[20vh] h-[100vh]  z-10"
+          className="relative mx-6 mt-10 h-screen w-full max-w-lg z-10 touch-action-pan-y"
+          onPointerDown={(e) => {
+            isPointerDown.current = true;
+            pointerDownPos.current = { x: e.clientX, y: e.clientY };
+            stopInteractionTimer(); // Stop timer on new interaction
+          }}
+          onPointerUp={() => {
+            isPointerDown.current = false;
+            startInteractionTimer(); // Start timer when interaction ends
+          }}
+          onPointerLeave={() => {
+            isPointerDown.current = false;
+            startInteractionTimer(); // Start timer when interaction ends
+          }}
+          onPointerMove={(e) => {
+            if (isPointerDown.current) {
+              const dx = Math.abs(e.clientX - pointerDownPos.current.x);
+              const dy = Math.abs(e.clientY - pointerDownPos.current.y);
+
+              if (dx > 20 || dy > 20) {
+                setIsInteracting(true);
+                e.preventDefault(); // Prevent default only when interaction starts
+              } else if (isInteractingRef.current) {
+                e.preventDefault(); // Continue preventing default if already interacting
+              }
+            }
+          }}
         >
           <Canvas
             camera={{ position: [0, 0, 10] }}
@@ -76,7 +131,7 @@ export default function HomePage() {
             {/* 3D Model */}
             <Model scale={3} />
 
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate />
+            <OrbitControls ref={controlsRef} enabled={isInteracting} />
           </Canvas>
         </motion.div>
 
