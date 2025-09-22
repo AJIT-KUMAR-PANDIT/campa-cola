@@ -40,11 +40,16 @@ export default function HomePage() {
   return (
     <motion.div
       ref={ref}
-      className="w-full h-[100vh] flex flex-col items-center justify-start bg-transparent"
+      className="w-full h-[200vh] flex flex-col items-center justify-start bg-transparent"
     >
       {/* Heading row */}
-      <div className="flex inset-0 items-center justify-center text-9xl font-bold text-gray-300 relative mt-20 w-full z-0">
-        <motion.span style={{ marginRight: textSpacing }}>Campa</motion.span>
+      <div className=" flex flex-col lg:flex-row inset-0 items-center justify-center text-9xl font-bold text-gray-300 relative mt-20 w-full z-0">
+        <motion.span
+          style={{ marginRight: textSpacing }}
+          className="text-7xl lg:text-9xl"
+        >
+          Campa
+        </motion.span>
 
         {/* GLB inline */}
         <motion.div
