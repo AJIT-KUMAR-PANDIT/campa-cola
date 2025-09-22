@@ -27,11 +27,11 @@ export default function HomePage() {
   const textSpacing = useTransform(scrollYProgress, [0, 1], [24, 8]);
 
   // Background color animates on scroll
-  const bgColor = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    ["#952EA5", "#4A90E2", "#F5A623"]
-  );
+  // const bgColor = useTransform(
+  //   scrollYProgress,
+  //   [0, 0.5, 1],
+  //   ["#952EA5", "#4A90E2", "#F5A623"]
+  // );
 
   // Light positions (dynamic)
   const lightLeftX = useTransform(scrollYProgress, [0, 1], [-10, -5]);
@@ -40,8 +40,7 @@ export default function HomePage() {
   return (
     <motion.div
       ref={ref}
-      style={{ backgroundColor: bgColor }}
-      className="w-full h-[200vh] flex flex-col items-center justify-start"
+      className="w-full h-[100vh] flex flex-col items-center justify-start bg-transparent"
     >
       {/* Heading row */}
       <div className="flex inset-0 items-center justify-center text-9xl font-bold text-gray-300 relative mt-20 w-full z-0">
